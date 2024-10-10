@@ -7,7 +7,6 @@ import (
 	"goravel/usecase"
 	"goravel/validation"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -58,24 +57,9 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 func (p *productController) GetProductById(ctx *gin.Context) {
 	idParams := ctx.Param("id")
 
-	if idParams == "" {
-		response := model.Response{
-			Status:  http.StatusBadRequest,
-			Message: "ID is required",
-		}
+	id, ok := validation.ValideParamId(idParams, ctx)
 
-		ctx.JSON(http.StatusBadRequest, response)
-		return
-	}
-
-	id, err := strconv.Atoi(idParams)
-
-	if err != nil {
-		response := model.Response{
-			Status:  http.StatusBadRequest,
-			Message: "ID must be a number",
-		}
-		ctx.JSON(http.StatusInternalServerError, response)
+	if !ok {
 		return
 	}
 
